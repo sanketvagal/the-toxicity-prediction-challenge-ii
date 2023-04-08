@@ -1,3 +1,8 @@
+# CSCI 555: The Toxicity Prediction Challenge II
+# Name: Sanket Dilip Vagal
+# StFX Student ID Number: 202207184
+# StFX email ID: x2022fjg@stfx.ca
+
 from pathlib import Path
 
 import lightgbm as lgb
