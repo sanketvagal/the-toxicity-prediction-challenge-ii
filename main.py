@@ -12,9 +12,11 @@ from rdkit.Chem import AllChem, Descriptors, Lipinski, MACCSkeys, MolSurf, Panda
 from sklearn.feature_selection import VarianceThreshold
 from sklearn.model_selection import StratifiedKFold, cross_val_score
 
+print("Loading train and test data")
 # Load data into a pandas DataFrame
 train = pd.read_csv(Path(__file__).resolve().parent / "input/train_II.csv")
 test = pd.read_csv(Path(__file__).resolve().parent / "input/test_II.csv")
+print("Loaded train and test data")
 
 # Split the 'Id' column into 'SMILES' and 'Assay ID' columns for both train and test dataframes
 train[["SMILES", "Assay ID"]] = train["Id"].str.split(";", expand=True)
@@ -27,9 +29,11 @@ test.columns = ["SMILES", "Assay ID"]
 train["Assay ID"] = pd.to_numeric(train["Assay ID"])
 test["Assay ID"] = pd.to_numeric(test["Assay ID"])
 
+print("Creating Mol object")
 # Convert 'SMILES' column to RDKit mol object for both train and test dataframes
 PandasTools.AddMoleculeColumnToFrame(train, smilesCol="SMILES")
 PandasTools.AddMoleculeColumnToFrame(test, smilesCol="SMILES")
+print("Created Mol object")
 
 # Drop rows with null values in the 'ROMol' column for both train and test dataframes
 train = train[train["ROMol"].notnull()]
@@ -65,6 +69,8 @@ def calculate_features(smiles: pd.Series) -> pd.Series:
     return pd.Series(features)
 
 
+print("Adding new features to train data")
+
 # Apply the function to the SMILES column to create new features for train data
 new_features = train["SMILES"].apply(calculate_features)
 
@@ -73,7 +79,9 @@ feature_names = [f"{feat}" for feat in new_features.columns]
 
 # Assign the new features to the DataFrame with the generated column names
 train[feature_names] = new_features
+print("Added new features to train data")
 
+print("Adding new features to test data")
 # Apply the function to the SMILES column to create new features for test data
 new_features = test["SMILES"].apply(calculate_features)
 
@@ -82,6 +90,7 @@ feature_names = [f"{feat}" for feat in new_features.columns]
 
 # Assign the new features to the DataFrame with the generated column names
 test[feature_names] = new_features
+print("Added new features to test data")
 
 # Drop the "SMILES" and "ROMol" columns from the train and test datasets
 train = train.drop("SMILES", axis=1)
@@ -89,6 +98,7 @@ test = test.drop("SMILES", axis=1)
 train = train.drop("ROMol", axis=1)
 test = test.drop("ROMol", axis=1)
 
+print("Performing variance threshold")
 # Create a VarianceThreshold object to remove features with low variance
 var_threshold = VarianceThreshold(threshold=0.2)
 
@@ -97,17 +107,46 @@ var_threshold.fit(train)
 
 # Get the indices of the important features
 important_features = train.columns[var_threshold.get_support()]
-print(len(important_features), important_features)
+
+print("Number features to select: ", len(important_features))
+print("Features to select: ", important_features)
 
 # Select only the important features from the train and test datasets
 train_s = train.loc[:, important_features]
 test_s = test.loc[:, important_features]
 
-# Create a LightGBM classifier with best hyperparameters obtained using GridSearchCV
+
+# Code for performing one time GridSearchCV on the LGBM model
+
+# from sklearn.metrics import f1_score
+# from sklearn.model_selection import GridSearchCV
+
+# # Define the hyperparameters and their possible values
+# param_grid = {
+#     'max_depth': [10, 12, 14, 16],
+#     'n_estimators': [1000, 1200,1400, 1600]
+# }
+
+# # Create a GridSearchCV object with the LGBMClassifier, the hyperparameters, and f1_macro scoring
+# grid_search = GridSearchCV(lgb_clf_1, param_grid, cv=skf, n_jobs=-1, scoring='f1_macro', verbose=3)
+
+# # Fit the GridSearchCV object to the data
+# grid_search.fit(train_s, labels)
+
+# # Print the best hyperparameters and the corresponding mean cross-validated score
+# print("Best hyperparameters: ", grid_search.best_params_)
+# print("Best cross-validation score: ", grid_search.best_score_)
+
+# # Fitting 5 folds for each of 16 candidates, totalling 80 fits
+# # Best hyperparameters:  {'max_depth': 14, 'n_estimators': 1600}
+
+# Create a LightGBM classifier with best hyperparameters obtained using GridSearchCV above
+print("Creating LGBM model")
 lgb_clf_1 = lgb.LGBMClassifier(
     max_depth=12, n_estimators=1400, scale_pos_weight=0.6, random_state=42
 )
 
+print("Performing 5 fold stratified cross validation")
 # Use StratifiedKFold cross-validation for model evaluation with 5 splits
 skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
@@ -116,11 +155,13 @@ scores = cross_val_score(
     lgb_clf_1, train_s, labels, cv=skf, scoring="f1_macro", verbose=1, n_jobs=-1
 )
 
-print("Mean F1 Score: ", sum(scores) / len(scores))
+print("Mean cross validation F1 Score: ", sum(scores) / len(scores))
 
+print("Fitting LGBM model")
 # Fit the model on the entire training set
 lgb_clf_1.fit(train_s, labels)
 
+print("Performing predictions on test data")
 # Make predictions on the test data using the trained LGBM classifier
 predictions = lgb_clf_1.predict(test_s)
 
@@ -128,6 +169,7 @@ predictions = lgb_clf_1.predict(test_s)
 test_data = pd.read_csv(Path(__file__).resolve().parent / "input/test_II.csv")
 output = pd.DataFrame({"Id": test_data.x, "Predicted": predictions})
 
+print("Creating submission.csv")
 # Save the predictions to a CSV file
 output.to_csv(Path(__file__).resolve().parent / "submission.csv", index=False)
 print("Your submission was successfully saved!")
