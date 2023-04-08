@@ -29,6 +29,9 @@ test.columns = ["SMILES", "Assay ID"]
 train["Assay ID"] = pd.to_numeric(train["Assay ID"])
 test["Assay ID"] = pd.to_numeric(test["Assay ID"])
 
+train = train[:100]
+test = test[:100]
+
 print("Creating Mol object")
 # Convert 'SMILES' column to RDKit mol object for both train and test dataframes
 PandasTools.AddMoleculeColumnToFrame(train, smilesCol="SMILES")
