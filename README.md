@@ -4,6 +4,8 @@
 StFX Student ID Number: 202207184  
 StFX email ID: x2022fjg@stfx.ca**
 
+Kaggle: https://www.kaggle.com/competitions/the-toxicity-prediction-challenge-ii/
+
 To get started, clone this repository locally.
 
 ### Steps to execute the Docker image
@@ -27,7 +29,7 @@ To get started, clone this repository locally.
 
 ### Steps to execute the python script via command line
 
-Building and running the docker image may take long amount of time. Instead, to run the `main.py` script via command line:
+Building and running the Docker image may take a long amount of time. Instead, to run the `main.py` script via command line:
 
 1. Install the required dependencies by running the following command:
 `pip install --no-cache-dir -r requirements.txt`
@@ -36,3 +38,8 @@ Building and running the docker image may take long amount of time. Instead, to 
 `python3 main.py`
 
 3. The final submission.csv file will be generated in the `output` folder of the current working directory
+
+
+
+Alternatively, the code as a python notebook can also be viewed on Kaggle here:
+https://www.kaggle.com/code/sanketvagal/x2022fjg
