@@ -135,10 +135,9 @@ test_s = test.loc[:, important_features]
 
 # # Print the best hyperparameters and the corresponding mean cross-validated score
 # print("Best hyperparameters: ", grid_search.best_params_)
-# print("Best cross-validation score: ", grid_search.best_score_)
 
 # # Fitting 5 folds for each of 16 candidates, totalling 80 fits
-# # Best hyperparameters:  {'max_depth': 14, 'n_estimators': 1600}
+# # Best hyperparameters:  {'max_depth': 12, 'n_estimators': 1600}
 
 # Create a LightGBM classifier with best hyperparameters obtained using GridSearchCV above
 print("Creating LGBM model")
