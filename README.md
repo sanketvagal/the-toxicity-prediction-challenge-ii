@@ -1,9 +1,8 @@
 # the-toxicity-prediction-challenge-ii
 
-**Name: Sanket Dilip Vagal
-StFX Student ID Number: 202207184
+**Name: Sanket Dilip Vagal  
+StFX Student ID Number: 202207184  
 StFX email ID: x2022fjg@stfx.ca**
-
 
 To get started, clone this repository locally.
 
