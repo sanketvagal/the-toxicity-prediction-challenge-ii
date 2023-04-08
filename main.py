@@ -44,7 +44,7 @@ labels = train["Expected"]
 train = train.drop("Expected", axis=1)
 
 # Define a function to calculate new features from SMILES using RDKit
-def calculate_features(smiles: pd.Series) -> pd.Series:
+def calculate_features(smiles: str) -> pd.Series:
     mol = Chem.MolFromSmiles(smiles)
     features = {}
     features["num_atoms"] = mol.GetNumAtoms()
@@ -171,5 +171,5 @@ output = pd.DataFrame({"Id": test_data.x, "Predicted": predictions})
 
 print("Creating submission.csv")
 # Save the predictions to a CSV file
-output.to_csv(Path(__file__).resolve().parent / "submission.csv", index=False)
+output.to_csv(Path(__file__).resolve().parent / "output/submission.csv", index=False)
 print("Your submission was successfully saved!")
