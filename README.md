@@ -6,6 +6,8 @@ StFX email ID: x2022fjg@stfx.ca**
 
 Kaggle: https://www.kaggle.com/competitions/the-toxicity-prediction-challenge-ii/
 
+Github: https://github.com/sanketvagal/the-toxicity-prediction-challenge-ii
+
 To get started, clone this repository locally.
 
 ### Steps to execute the Docker image
