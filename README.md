@@ -23,9 +23,10 @@ To get started, clone this repository locally.
 	`docker run -v ${PWD}/output:/usr/src/app/output -m 13g --cpus=8 -e PYTHONUNBUFFERED=1 the-toxicity-prediction-challenge-ii`
 
 	For Windows machines:
-	`docker run -v %cd%/output:/usr/src/app/output -m 13g --cpus=8 -e PYTHONUNBUFFERED=1 the-toxicity-prediction-challenge-ii`.
+	`docker run -v %cd%/output:/usr/src/app/output -m 13g --cpus=8 -e PYTHONUNBUFFERED=1 the-toxicity-prediction-challenge-ii`
 
 	Update the -m value as per the memory and —cpus as per the number of cpus to be allocated
+	Note: You may need to manually set the memory and CPU limit in DOcker settings
 
 5. The final submission.csv file will be generated in the `the-toxicity-prediction-challenge-ii/output` folder
 
